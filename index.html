@@ -164,6 +164,37 @@ select{appearance:none; -webkit-appearance:none;
 .btn-main:active{transform:scale(.98)}
 .note{margin-top:14px; font-size:12.5px; color:var(--sub); line-height:1.7}
 
+/* primary CTA card */
+.big-card.primary{background:var(--grad); border:none; color:var(--accent-ink)}
+.big-card.primary .emo{background:rgba(255,255,255,.22)}
+.big-card.primary .sub{color:var(--accent-ink); opacity:.82}
+.big-card.primary::after{color:var(--accent-ink)}
+
+/* topics */
+.cat-head{font-size:13px; font-weight:800; color:var(--sub); margin:18px 2px 10px; letter-spacing:.01em}
+.topic-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.topic{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:14px; box-shadow:var(--card-shadow); transition:transform .15s; text-align:left}
+.topic:active{transform:scale(.97)}
+.topic .emo{font-size:27px}
+.topic .t{font-weight:800; font-size:14.5px; margin-top:8px}
+.topic .d{font-size:11.5px; color:var(--sub); margin-top:2px; line-height:1.4}
+
+/* call (hands-free) */
+.call{flex:1; display:flex; flex-direction:column; overflow:hidden}
+.call-chat{flex:1; overflow-y:auto; padding:12px 16px; display:flex; flex-direction:column; gap:10px; scrollbar-width:none}
+.call-chat::-webkit-scrollbar{display:none}
+.call-dock{padding:12px 16px calc(20px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; align-items:center; gap:9px; background:linear-gradient(180deg,transparent,var(--bg) 42%)}
+.call-interim{font-size:15px; color:var(--ink); min-height:22px; text-align:center; opacity:.7; font-style:italic; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.orb{width:96px; height:96px; border-radius:50%; background:var(--grad); color:var(--accent-ink); font-size:38px; display:grid; place-items:center; position:relative; box-shadow:0 10px 30px var(--ring); transition:transform .15s}
+.orb:active{transform:scale(.95)}
+.orb.listening::before,.orb.listening::after{content:''; position:absolute; inset:-6px; border-radius:50%; border:2.5px solid var(--accent); animation:ripple 1.6s ease-out infinite; pointer-events:none}
+.orb.listening::after{animation-delay:.8s}
+.orb.speaking{animation:pulse 1s infinite}
+.orb.thinking{opacity:.75}
+.orb.paused{background:var(--surface2); color:var(--sub); box-shadow:none}
+.call-status{font-size:13.5px; color:var(--sub); min-height:20px; font-weight:600; text-align:center}
+.call-end{font-size:12.5px; color:var(--sub); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:7px 18px; margin-top:2px}
+
 .pop{position:fixed; font-size:26px; pointer-events:none; animation:fall 1s ease-out forwards; z-index:99}
 @keyframes fall{0%{opacity:1; transform:translateY(0) rotate(0)}100%{opacity:0; transform:translateY(90px) rotate(220deg)}}
 .spin{display:inline-block; animation:sp 1s linear infinite}
@@ -241,12 +272,33 @@ select{appearance:none; -webkit-appearance:none;
       <div class="sub" id="dash-prog-t" style="margin-top:2px"></div>
       <div class="pbar"><div id="dash-prog-b" style="width:0%"></div></div>
     </div>
+    <div class="big-card primary" id="talk-card" onclick="openTopics()" style="display:none"><span class="emo">🎙️</span><div><div class="t">프리토킹 — 주제로 대화</div><div class="sub">핸즈프리로 AI와 자유롭게 영어 회화</div></div></div>
     <div class="big-card" onclick="continueLearn()"><span class="emo">▶️</span><div><div class="t">이어서 학습하기</div><div class="sub" id="dash-next"></div></div></div>
     <div class="big-card" onclick="startReview()"><span class="emo">🔁</span><div><div class="t">오늘의 복습</div><div class="sub" id="dash-rev"></div></div><span class="badge" id="dash-rev-n"></span></div>
     <div class="big-card" onclick="openMap()"><span class="emo">🗂️</span><div><div class="t">코스 전체 보기</div><div class="sub">레벨 1~3 · 유닛 목록</div></div></div>
     <div class="big-card" id="free-card" onclick="startFree()" style="display:none"><span class="emo">🎲</span><div><div class="t">자유 대화</div><div class="sub">아무 주제로 편하게 말하기</div></div></div>
     <div class="big-card" id="kidfree-card" onclick="startKidFree()" style="display:none"><span class="emo">🗨️</span><div><div class="t">코코랑 자유수다</div><div class="sub">수다 떨면서 새 단어 수집하기</div></div></div>
     <div class="big-card" id="vocab-card" onclick="openVocab()" style="display:none"><span class="emo">📔</span><div><div class="t">나의 단어장</div><div class="sub">수다에서 모은 단어들</div></div><span class="badge" id="vocab-n"></span></div>
+  </div>
+</section>
+
+<!-- 프리토킹 주제 -->
+<section id="s-topics" class="screen">
+  <div class="bar"><button class="back" onclick="show('s-dash')">←</button><span class="title">🎙️ 프리토킹 주제</span></div>
+  <div class="pad scroll" id="topics-list"></div>
+</section>
+
+<!-- 프리토킹 통화 (핸즈프리) -->
+<section id="s-call" class="screen">
+  <div class="bar"><button class="back" onclick="endCall()">←</button><span class="title" id="call-title"></span></div>
+  <div class="call">
+    <div class="call-chat" id="call-chat"></div>
+    <div class="call-dock">
+      <div class="call-interim" id="call-interim"></div>
+      <button class="orb" id="call-orb" onclick="toggleCall()">🎙️</button>
+      <div class="call-status" id="call-status"></div>
+      <button class="call-end" onclick="endCall()">대화 종료</button>
+    </div>
   </div>
 </section>
 
@@ -444,7 +496,8 @@ function enter(p){
   prof=p;
   document.body.classList.toggle('kid',p==='kid');
   $('dash-title').textContent=p==='kid'?'🧒 아이 모드':'🧑‍💼 어른 모드';
-  $('free-card').style.display=p==='adult'?'flex':'none';
+  $('talk-card').style.display=p==='adult'?'flex':'none';
+  $('free-card').style.display='none'; // 프리토킹이 대체
   $('kidfree-card').style.display=p==='kid'?'flex':'none';
   $('vocab-card').style.display=p==='kid'?'flex':'none';
   $('vocab-n').textContent=Object.keys(P.kid.vocab).length+'개';
@@ -636,6 +689,10 @@ function aiSay(text,rate){
   bubble('ai',text,true); speak(text,rate||1);
 }
 function sysPrompt(){
+  if(chatCtx.mode==='talk'){
+    const t=chatCtx.topic||{};
+    return "You are a warm, curious, encouraging native English conversation partner having a real-time VOICE chat with a Korean adult learner at an intermediate level. Today's topic: \""+(t.title||'free chat')+"\" — "+(t.en||'a casual friendly conversation')+". Have a natural, flowing back-and-forth ENTIRELY in easy spoken English. Keep YOUR turns short: 1 to 3 casual sentences. React genuinely to what they said, then ALWAYS finish with ONE open follow-up question so they keep talking. Stay loosely on the topic but let the conversation flow naturally. Speak like a friendly real person — never lecture, never give lists, never use markdown. Also be a gentle coach: ONLY when their last message had a clear grammar or word-choice mistake, give a corrected natural version. Respond ONLY with JSON: {\"reply\":\"your short spoken English reply that ends with a question\",\"correction\":null or \"a natural corrected version of the learner's last sentence\",\"tip\":null or \"one short tip in Korean, max one sentence\"}";
+  }
   if(chatCtx.mode==='kidfree'){
     const known=Object.keys(P.kid.vocab).slice(-40).join(', ')||'none yet';
     const pending=chatCtx.targets.filter(t=>!t.hit).map(t=>t.word).join(', ')||'none';
@@ -795,6 +852,191 @@ async function genUnit(){
     alert('새 유닛 추가: '+(u.emo||'✨')+' '+u.title);
     openMap();
   }catch(e){alert('생성 실패: '+e.message);}
+}
+
+/* ============ 프리토킹 (주제별 · 핸즈프리 통화) ============ */
+const TALK_TOPICS=[
+ {cat:'🗓️ 일상 이야기', items:[
+   {emo:'☀️',title:'오늘 하루',sub:'오늘 뭐 했는지',en:"how the learner's day has been and what they did today"},
+   {emo:'🛌',title:'주말·휴일',sub:'쉬는 날 이야기',en:"the learner's weekend plans and how they like to spend days off"},
+   {emo:'🍜',title:'음식·맛집',sub:'좋아하는 음식',en:"favorite foods, restaurants, and cooking"},
+   {emo:'☕',title:'커피 취향',sub:'카페와 음료',en:"coffee or tea preferences and cafe culture"},
+ ]},
+ {cat:'✈️ 여행', items:[
+   {emo:'🌍',title:'가고 싶은 나라',sub:'버킷리스트',en:"dream travel destinations and why the learner wants to go"},
+   {emo:'📸',title:'기억의 여행',sub:'최고의 경험',en:"a memorable trip the learner has taken"},
+   {emo:'🧳',title:'여행 스타일',sub:'계획파 vs 즉흥파',en:"the learner's travel style — careful planner or spontaneous"},
+ ]},
+ {cat:'💼 일과 성장', items:[
+   {emo:'🧑‍💻',title:'내 직업',sub:'하는 일 소개',en:"the learner's job and what a typical workday looks like"},
+   {emo:'🌱',title:'배우고 싶은 것',sub:'새 기술·취미',en:"skills or new things the learner wants to learn"},
+   {emo:'😮‍💨',title:'스트레스 해소',sub:'지칠 때 하는 것',en:"how the learner relaxes and handles stress"},
+ ]},
+ {cat:'🎬 취미와 재미', items:[
+   {emo:'🎬',title:'영화·드라마',sub:'요즘 본 것',en:"movies and shows the learner has watched recently"},
+   {emo:'🎵',title:'음악',sub:'좋아하는 음악',en:"the learner's music taste and favorite artists"},
+   {emo:'🐶',title:'반려동물·동물',sub:'좋아하는 동물',en:"pets and animals the learner likes"},
+   {emo:'🎮',title:'게임·취미',sub:'즐기는 것',en:"the learner's hobbies and games they enjoy"},
+ ]},
+ {cat:'💭 상상 대화', items:[
+   {emo:'💰',title:'복권 당첨되면',sub:'즐거운 상상',en:"what the learner would do if they won the lottery"},
+   {emo:'🦸',title:'초능력이 생기면',sub:'어떤 능력?',en:"which superpower the learner would want and why"},
+   {emo:'🏝️',title:'무인도에 간다면',sub:'딱 3가지',en:"three things the learner would bring to a desert island"},
+   {emo:'⏰',title:'타임머신이 있다면',sub:'과거 or 미래',en:"which time period the learner would travel to and why"},
+ ]},
+ {cat:'🎲 자유', items:[
+   {emo:'💬',title:'아무거나',sub:'AI가 주제를 골라줘요',en:"anything at all — pick a fun, casual everyday topic to start and let it flow wherever the learner wants"},
+ ]},
+];
+let call=null; // {topic, active, paused, rec, gotResult, tight}
+
+function openTopics(){
+  const el=$('topics-list'); el.innerHTML='';
+  TALK_TOPICS.forEach(group=>{
+    const h=document.createElement('div'); h.className='cat-head'; h.textContent=group.cat; el.appendChild(h);
+    const g=document.createElement('div'); g.className='topic-grid';
+    group.items.forEach(t=>{
+      const c=document.createElement('button'); c.className='topic';
+      c.innerHTML='<div class="emo">'+t.emo+'</div><div class="t">'+esc(t.title)+'</div><div class="d">'+esc(t.sub)+'</div>';
+      c.onclick=()=>startTalk(t);
+      g.appendChild(c);
+    });
+    el.appendChild(g);
+  });
+  const n=document.createElement('p'); n.className='note';
+  n.innerHTML='주제를 고르면 <b>통화하듯</b> 대화가 시작돼요. 마이크는 처음 한 번만 허용하면 되고, 그 뒤엔 말을 멈추면 자동으로 알아듣고 답합니다.';
+  el.appendChild(n);
+  show('s-topics');
+}
+
+async function startTalk(topic){
+  chatCtx={mode:'talk',topic:topic,hist:[]};
+  call={topic:topic,active:true,paused:false,rec:null,gotResult:false,tight:0};
+  $('call-title').textContent=topic.emo+' '+topic.title;
+  $('call-chat').innerHTML=''; $('call-interim').textContent='';
+  setOrb('thinking','대화를 준비하는 중…');
+  show('s-call');
+  // 마이크 권한 미리 한 번만 요청 → 이후 통화 내내 재요청 없음
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({audio:true});
+    s.getTracks().forEach(t=>t.stop());
+  }catch(e){
+    setOrb('paused','🎤 마이크 권한을 허용해 주세요. 허용 후 탭하면 시작해요');
+  }
+  if(call&&call.active)callTurn(null,true);
+}
+
+function callBubble(cls,text){
+  const b=document.createElement('div'); b.className='bub '+cls; b.textContent=text;
+  if(cls==='ai'){const r=document.createElement('button'); r.className='replay'; r.textContent='🔊'; r.onclick=()=>speak(text,1); b.appendChild(r);}
+  $('call-chat').appendChild(b); $('call-chat').scrollTop=$('call-chat').scrollHeight;
+}
+function callFix(correction,tip){
+  const f=document.createElement('div'); f.className='fix';
+  f.innerHTML=correction?('💡 <b>'+esc(correction)+'</b>'+(tip?('<br>'+esc(tip)):'')):('💡 '+esc(tip||''));
+  $('call-chat').appendChild(f); $('call-chat').scrollTop=$('call-chat').scrollHeight;
+}
+
+async function callTurn(userText,isFirst){
+  if(!call||!call.active)return;
+  if(!isFirst){
+    callBubble('me',userText);
+    chatCtx.hist.push({role:'user',parts:[{text:userText}]});
+    bump();
+  }
+  setOrb('thinking','생각 중…'); $('call-interim').textContent='';
+  try{
+    const contents=isFirst
+      ?[{role:'user',parts:[{text:'Start the conversation now: greet me warmly in one sentence and ask one engaging opening question about the topic.'}]}]
+      :chatCtx.hist;
+    const raw=await gemini({
+      system_instruction:{parts:[{text:sysPrompt()}]},
+      contents:contents,
+      generationConfig:{responseMimeType:'application/json',temperature:0.9}
+    });
+    if(!call||!call.active)return;
+    const j=parseJSON(raw);
+    if(j.correction||j.tip)callFix(j.correction,j.tip);
+    chatCtx.hist.push({role:'model',parts:[{text:raw}]});
+    const reply=j.reply||'(…)';
+    callBubble('ai',reply);
+    setOrb('speaking','🔊 말하는 중…');
+    callSpeak(reply,()=>{ if(call&&call.active&&!call.paused)callListen(); });
+  }catch(e){
+    if(call&&call.active)setOrb('paused','오류: '+e.message+' — 탭해서 다시 시도');
+  }
+}
+
+function callSpeak(text,cb){
+  if(!('speechSynthesis' in window)||!text){setTimeout(cb,300); return;}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=1;
+  const v=voices.find(v=>v.lang.startsWith('en')&&/Google US English|Samantha|Aria|Jenny/i.test(v.name))||voices.find(v=>v.lang.startsWith('en-US'))||voices.find(v=>v.lang.startsWith('en'));
+  if(v)u.voice=v;
+  let done=false; const fin=()=>{if(done)return; done=true; cb();};
+  u.onend=fin; u.onerror=fin;
+  setTimeout(fin, Math.min(22000, 1600+text.length*85)); // 일부 브라우저가 onend를 안 주는 경우 대비
+  speechSynthesis.speak(u);
+}
+
+function callListen(){
+  if(!call||!call.active||call.paused)return;
+  if(!SR){ setOrb('paused','이 브라우저는 자동 음성인식을 지원하지 않아요. 크롬으로 열어주세요.'); return; }
+  call.gotResult=false;
+  const started=Date.now();
+  let interim='';
+  const r=new SR(); call.rec=r;
+  r.lang='en-US'; r.interimResults=true; r.maxAlternatives=1; r.continuous=false;
+  setOrb('listening','🎙️ 듣고 있어요 — 그냥 말하세요');
+  r.onresult=e=>{
+    interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const res=e.results[i];
+      if(res.isFinal){
+        const txt=(res[0].transcript||'').trim();
+        if(txt){ call.gotResult=true; call.tight=0; $('call-interim').textContent=''; try{r.stop()}catch(_){}
+          onCallSpeech(txt); return; }
+      }else interim+=res[0].transcript;
+    }
+    $('call-interim').textContent=interim;
+  };
+  r.onerror=e=>{
+    if(e.error==='not-allowed'||e.error==='service-not-allowed'){ setOrb('paused','🎤 마이크 권한을 허용해 주세요. 탭해서 재시도'); call.paused=true; }
+    // no-speech/aborted/network 등은 onend에서 조용히 재시도
+  };
+  r.onend=()=>{
+    if(!call||!call.active||call.paused)return;
+    if(call.gotResult)return;
+    // 침묵/타임아웃 → 계속 듣기 (통화처럼). 단, 즉시 종료가 반복되면 정지(에러 루프 방지)
+    if(Date.now()-started<250){ call.tight=(call.tight||0)+1; } else call.tight=0;
+    if(call.tight>12){ setOrb('paused','음성 인식을 시작할 수 없어요. 탭해서 재시도'); call.paused=true; return; }
+    callListen();
+  };
+  try{ r.start(); }
+  catch(e){ setOrb('paused','탭해서 대화를 시작하세요'); call.paused=true; }
+}
+
+function onCallSpeech(text){ if(call&&call.active)callTurn(text,false); }
+
+function setOrb(state,status){
+  const o=$('call-orb'); if(!o)return;
+  o.className='orb '+state;
+  const face = state==='listening'?'🎙️' : state==='speaking'?'🔊' : state==='paused'?'⏸' : '';
+  o.innerHTML = state==='thinking' ? '<span class="spin">💭</span>' : face;
+  $('call-status').textContent=status||'';
+}
+
+function toggleCall(){
+  if(!call||!call.active)return;
+  if(call.paused){ call.paused=false; call.tight=0; callListen(); }
+  else{ call.paused=true; if(call.rec){try{call.rec.stop()}catch(_){}} speechSynthesis.cancel(); setOrb('paused','일시정지 — 탭하면 다시 들어요'); }
+}
+function endCall(){
+  if(call){ call.active=false; call.paused=true; if(call.rec){try{call.rec.stop()}catch(_){}} }
+  if('speechSynthesis' in window)speechSynthesis.cancel();
+  call=null;
+  show('s-dash');
 }
 
 /* ============ TTS ============ */
