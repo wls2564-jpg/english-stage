@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="영어스테이지">
+<meta name="theme-color" content="#101C24">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>우리집 영어 스테이지</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#0B151D; --surface:#152431; --surface2:#1E3242; --ink:#EAF4F1; --sub:#8CA6A6;
+  --accent:#4FDCC0; --accent2:#3EB8D8; --accent-ink:#06241F; --user:#20554B; --warn:#F4B860; --ok:#4FDCC0;
+  --line:rgba(255,255,255,.07); --radius:22px;
+  --grad:linear-gradient(135deg,#4FDCC0,#3EB8D8);
+  --ring:rgba(79,220,192,.16);
+  --tint:linear-gradient(135deg,rgba(79,220,192,.16),rgba(62,184,216,.06));
+  --tintline:rgba(79,220,192,.28);
+  --bgfx:radial-gradient(130% 80% at 12% -8%,#17303C 0%,#0B151D 55%,#0A121A 100%);
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --card-shadow:0 3px 14px rgba(0,0,0,.22);
+}
+body.kid{
+  --bg:#FFF6E3; --surface:#FFFFFF; --surface2:#FFEDC7; --ink:#33291C; --sub:#A08D6E;
+  --accent:#FF8A4D; --accent2:#FFB13D; --accent-ink:#FFF8EE; --user:#FFE3C2; --warn:#3FB9A4; --ok:#3FB9A4;
+  --line:rgba(140,100,40,.12);
+  --grad:linear-gradient(135deg,#FF8A4D,#FFB13D);
+  --ring:rgba(255,138,77,.22);
+  --tint:linear-gradient(135deg,rgba(255,138,77,.14),rgba(255,177,61,.07));
+  --tintline:rgba(255,138,77,.35);
+  --bgfx:radial-gradient(130% 80% at 12% -8%,#FFEBBD 0%,#FFF6E3 55%,#FFF1D2 100%);
+  --shadow:0 10px 26px rgba(196,126,44,.22);
+  --card-shadow:0 4px 16px rgba(196,132,52,.13);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  background:var(--bgfx); color:var(--ink); transition:background .4s; display:flex; flex-direction:column; overflow:hidden; letter-spacing:-.01em}
+.eng{font-family:"Baloo 2","Pretendard Variable",sans-serif}
+.screen{display:none; flex:1; flex-direction:column; overflow:hidden; padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.screen.on{display:flex; animation:screenIn .3s cubic-bezier(.16,.8,.3,1)}
+@keyframes screenIn{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
+.pad{padding:18px 20px}
+.scroll{flex:1; overflow-y:auto; scrollbar-width:none; padding-bottom:30px}
+.scroll::-webkit-scrollbar{display:none}
+h1{font-size:26px; font-weight:800; line-height:1.25; letter-spacing:-.02em}
+.sub{color:var(--sub); font-size:13.5px; line-height:1.6}
+button{font-family:inherit; border:none; cursor:pointer; color:inherit; background:none; user-select:none; -webkit-user-select:none}
+
+/* top bar */
+.bar{display:flex; align-items:center; gap:10px; padding:14px 16px 10px}
+.bar .back,.bar .gear{width:40px; height:40px; border-radius:14px; background:var(--surface); border:1px solid var(--line); display:grid; place-items:center; font-size:17px; padding:0; transition:transform .15s}
+.bar .back:active,.bar .gear:active{transform:scale(.92)}
+.bar .title{font-weight:800; font-size:17px; flex:1; letter-spacing:-.01em}
+
+/* hero (setup) */
+.hero{display:flex; flex-direction:column; align-items:flex-start; gap:16px; margin:30px 0 8px}
+.hero .hero-ic{width:64px; height:64px; border-radius:20px; background:var(--grad); display:grid; place-items:center; font-size:30px; box-shadow:var(--shadow)}
+
+/* cards */
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:12px; box-shadow:var(--card-shadow)}
+#s-dash .card:first-child{background:var(--tint),var(--surface); border-color:var(--tintline)}
+.big-card{display:flex; align-items:center; gap:14px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; margin-bottom:10px; box-shadow:var(--card-shadow); transition:transform .15s}
+.big-card:active{transform:scale(.98)}
+.big-card .emo{width:52px; height:52px; min-width:52px; border-radius:16px; background:var(--surface2); display:grid; place-items:center; font-size:26px}
+.big-card .t{font-weight:800; font-size:16px}
+.big-card::after{content:'›'; font-size:22px; color:var(--sub); margin-left:auto; padding-left:6px}
+.big-card:has(.badge)::after{margin-left:8px}
+.badge{margin-left:auto; font-size:12.5px; font-weight:800; color:var(--accent); background:var(--surface2); border-radius:999px; padding:6px 12px; white-space:nowrap}
+
+/* progress */
+.pbar{height:8px; background:var(--surface2); border-radius:99px; overflow:hidden; margin-top:12px}
+.pbar>div{height:100%; background:var(--grad); border-radius:99px; transition:width .5s cubic-bezier(.2,.8,.3,1)}
+
+/* course map */
+.lv-head{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; color:var(--sub); letter-spacing:.08em; margin:20px 2px 10px}
+.lv-head::before{content:''; width:8px; height:8px; border-radius:3px; background:var(--grad)}
+.unit-row{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:12px 14px; margin-bottom:8px; box-shadow:var(--card-shadow); transition:transform .15s}
+.unit-row:active{transform:scale(.98)}
+.unit-row .emo{width:42px; height:42px; min-width:42px; border-radius:13px; background:var(--surface2); display:grid; place-items:center; font-size:21px}
+.unit-row .t{font-weight:700; font-size:14.5px; flex:1}
+.unit-row .st{font-size:13px; color:var(--accent); font-weight:800}
+.unit-row.done{opacity:.62}
+
+/* steps */
+.steps{display:flex; gap:6px; padding:2px 20px 0}
+.steps span{flex:1; height:5px; border-radius:99px; background:var(--surface2)}
+.steps span.on{background:var(--grad)}
+.step-label{padding:12px 20px 2px; font-size:12.5px; color:var(--accent); font-weight:800; letter-spacing:.04em}
+
+/* expr cards */
+.expr{position:relative; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:12px; box-shadow:var(--card-shadow)}
+.expr .en{font-size:21px; font-weight:800; padding-right:46px}
+.expr .ko{font-size:14px; color:var(--sub); margin-top:4px}
+.expr .ex{margin-top:14px; padding:12px 14px; background:var(--surface2); border-radius:14px; font-size:14px; line-height:1.55}
+.expr .ex .exko{color:var(--sub); font-size:12.5px; margin-top:4px}
+.expr .play{position:absolute; top:14px; right:14px; width:40px; height:40px; border-radius:50%; background:var(--surface2); display:grid; place-items:center; font-size:17px; padding:0; transition:transform .15s}
+.expr .play:active{transform:scale(.9)}
+
+/* drill / flashcard stage */
+.stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:20px; text-align:center}
+.flash-emo{font-size:72px; width:136px; height:136px; line-height:136px; text-align:center; background:var(--surface); border:1px solid var(--line); border-radius:34px; box-shadow:var(--card-shadow)}
+.drill-en{font-size:28px; font-weight:800; line-height:1.3; letter-spacing:-.01em; max-width:340px}
+.drill-ko{font-size:15px; color:var(--sub)}
+.stars{font-size:24px; min-height:40px; font-weight:700}
+.row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+.pill{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:13px 22px; font-size:14.5px; font-weight:700; box-shadow:var(--card-shadow); transition:transform .15s}
+.pill:active{transform:scale(.95)}
+.pill.go{background:var(--grad); color:var(--accent-ink); border:none; box-shadow:0 6px 18px var(--ring)}
+.pill.ghost{background:transparent; border:1px solid var(--line); color:var(--sub); box-shadow:none}
+
+/* chat */
+.chip-row{display:flex; gap:8px; flex-wrap:wrap; padding:8px 16px 4px}
+.chip{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 12px; font-size:12px; color:var(--sub); font-weight:600}
+.chip.hit{background:var(--grad); border-color:transparent; color:var(--accent-ink); font-weight:800; box-shadow:0 3px 10px var(--ring)}
+.chat{flex:1; overflow-y:auto; padding:10px 16px; display:flex; flex-direction:column; gap:10px; scrollbar-width:none}
+.chat::-webkit-scrollbar{display:none}
+.bub{max-width:82%; padding:12px 15px; border-radius:20px; font-size:15.5px; line-height:1.5; word-break:break-word; animation:bubIn .25s ease}
+@keyframes bubIn{from{opacity:0; transform:translateY(8px) scale(.97)}to{opacity:1; transform:none}}
+.bub.ai{background:var(--surface); border:1px solid var(--line); align-self:flex-start; border-bottom-left-radius:7px; box-shadow:var(--card-shadow)}
+.bub.me{background:var(--grad); color:var(--accent-ink); align-self:flex-end; border-bottom-right-radius:7px; box-shadow:0 4px 14px var(--ring); font-weight:600}
+.bub .replay{font-size:14px; margin-left:6px; opacity:.75; padding:0}
+.fix{align-self:flex-start; max-width:82%; background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--warn); border-radius:14px; padding:11px 13px; font-size:13px; line-height:1.55; color:var(--sub); animation:bubIn .25s ease}
+.fix b{color:var(--warn)}
+.banner{align-self:center; background:var(--grad); color:var(--accent-ink); border-radius:999px; padding:10px 20px; font-weight:800; font-size:14px; box-shadow:0 6px 18px var(--ring); animation:popIn .35s cubic-bezier(.3,1.4,.5,1)}
+@keyframes popIn{from{opacity:0; transform:scale(.7)}to{opacity:1; transform:scale(1)}}
+.wcard{align-self:flex-start; max-width:82%; border-radius:18px; padding:13px 16px; border:2px solid transparent;
+  background:linear-gradient(var(--surface2),var(--surface2)) padding-box,var(--grad) border-box; animation:popIn .35s cubic-bezier(.3,1.4,.5,1)}
+.wcard .we{font-size:20px; font-weight:800}
+.wcard .wk{font-size:13px; color:var(--sub); margin-top:2px}
+.wcard .wt{font-size:11.5px; color:var(--accent); font-weight:800; margin-bottom:4px; letter-spacing:.05em}
+.vrow{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:13px 16px; margin-bottom:8px; box-shadow:var(--card-shadow)}
+.vrow .we{font-weight:800; font-size:16px; flex:1}
+.vrow .wk{color:var(--sub); font-size:13.5px}
+
+/* dock */
+.dock{padding:10px 16px calc(20px + env(safe-area-inset-bottom)); text-align:center; background:linear-gradient(180deg,transparent,var(--bg) 55%)}
+.status{font-size:13px; color:var(--sub); min-height:18px; margin-bottom:10px}
+.mic{width:84px; height:84px; border-radius:50%; background:var(--grad); color:var(--accent-ink); font-size:32px; position:relative;
+  box-shadow:0 10px 26px var(--ring),0 4px 14px rgba(0,0,0,.25); transition:transform .15s}
+.mic:active{transform:scale(.93)}
+.mic.listening{animation:pulse 1.4s infinite}
+.mic.listening::before,.mic.listening::after{content:''; position:absolute; inset:-4px; border-radius:50%; border:2px solid var(--accent); animation:ripple 1.6s ease-out infinite; pointer-events:none}
+.mic.listening::after{animation-delay:.8s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes ripple{0%{transform:scale(1); opacity:.7}100%{transform:scale(1.65); opacity:0}}
+@media (prefers-reduced-motion:reduce){.mic.listening,.mic.listening::before,.mic.listening::after,.screen.on,.bub,.banner,.wcard,.fix{animation:none}}
+
+/* forms */
+label{display:block; font-size:12.5px; font-weight:700; color:var(--sub); margin:18px 0 7px; letter-spacing:.03em}
+input,select{width:100%; padding:14px 15px; border-radius:15px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink); font-size:15px; font-family:inherit; outline:none; transition:border-color .2s, box-shadow .2s}
+input:focus,select:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--ring)}
+select{appearance:none; -webkit-appearance:none;
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238CA6A6' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 15px center; padding-right:40px}
+.btn-main{width:100%; margin-top:22px; padding:16px; border-radius:17px; background:var(--grad); color:var(--accent-ink); font-size:16px; font-weight:800; letter-spacing:-.01em; box-shadow:0 8px 22px var(--ring); transition:transform .15s}
+.btn-main:active{transform:scale(.98)}
+.note{margin-top:14px; font-size:12.5px; color:var(--sub); line-height:1.7}
+
+.pop{position:fixed; font-size:26px; pointer-events:none; animation:fall 1s ease-out forwards; z-index:99}
+@keyframes fall{0%{opacity:1; transform:translateY(0) rotate(0)}100%{opacity:0; transform:translateY(90px) rotate(220deg)}}
+.spin{display:inline-block; animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- 설정 -->
+<section id="s-setup" class="screen">
+  <div class="scroll pad">
+    <div class="hero">
+      <div class="hero-ic">🎙️</div>
+      <div>
+        <h1>우리집 영어 스테이지</h1>
+        <p class="sub" style="margin-top:6px">배우고 → 말하고 → 상황극으로 써먹고 → 복습하는 4단계 학습 루프</p>
+      </div>
+    </div>
+    <label>Gemini API 키</label>
+    <input id="in-key" type="password" placeholder="AIza...">
+    <label>모델</label>
+    <select id="in-model">
+      <option value="gemini-2.5-flash">gemini-2.5-flash (기본 · 검증된 안정 모델)</option>
+      <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (가장 저렴)</option>
+      <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite</option>
+      <option value="gemini-3.5-flash">gemini-3.5-flash (대화 품질 우선)</option>
+    </select>
+    <label>음성 인식 방식</label>
+    <select id="in-stt">
+      <option value="auto">자동 (브라우저 우선, 실패 시 AI 인식)</option>
+      <option value="browser">브라우저 내장만</option>
+      <option value="ai">AI 인식만 (녹음 → Gemini)</option>
+    </select>
+    <button class="pill" style="width:100%; margin-top:16px" onclick="testConnection()">🔌 연결 테스트 (키·모델 확인)</button>
+    <div class="status" id="setup-test" style="min-height:0; margin-top:8px"></div>
+    <button class="btn-main" onclick="saveSetup()">시작하기</button>
+
+    <label style="margin-top:24px">학습 기록 관리</label>
+    <div class="row" style="justify-content:stretch; flex-wrap:nowrap; gap:8px">
+      <button class="pill ghost" style="flex:1" onclick="exportProgress()">⬇️ 백업</button>
+      <button class="pill ghost" style="flex:1" onclick="$('imp-file').click()">⬆️ 복원</button>
+      <button class="pill ghost" style="flex:1" onclick="wipeProgress()">🗑️ 초기화</button>
+    </div>
+    <input id="imp-file" type="file" accept="application/json,.json" style="display:none" onchange="importProgress(this)">
+    <p class="note">· API 키와 학습 기록은 이 기기 브라우저에만 저장됩니다.<br>· 브라우저 기록을 지우면 진도가 사라지니 가끔 <b>백업</b>해 두세요.<br>· "홈 화면에 추가"하면 앱처럼 쓸 수 있어요.<br>· 마이크는 HTTPS 환경(GitHub Pages 등)에서 동작합니다.</p>
+  </div>
+</section>
+
+<!-- 프로필 -->
+<section id="s-home" class="screen">
+  <div class="bar"><span class="title" style="font-size:20px">누가 연습할까요?</span><button class="gear" onclick="show('s-setup')">⚙️</button></div>
+  <div class="pad scroll">
+    <div class="big-card" onclick="enter('kid')"><span class="emo">🧒</span><div><div class="t">아이 모드</div><div class="sub">단어 → 문장 → 코코와 대화</div></div><span class="badge" id="bd-kid"></span></div>
+    <div class="big-card" onclick="enter('adult')"><span class="emo">🧑‍💼</span><div><div class="t">어른 모드</div><div class="sub">표현 학습 → 드릴 → 롤플레이 → 복습</div></div><span class="badge" id="bd-adult"></span></div>
+  </div>
+</section>
+
+<!-- 대시보드 -->
+<section id="s-dash" class="screen">
+  <div class="bar"><button class="back" onclick="goHome()">←</button><span class="title" id="dash-title"></span></div>
+  <div class="pad scroll">
+    <div class="card" onclick="setGoal()">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font-size:24px">🔥</span>
+        <div style="flex:1">
+          <div style="font-weight:700; font-size:15px" id="streak-t"></div>
+          <div class="sub" id="goal-t" style="margin-top:2px"></div>
+        </div>
+        <span class="badge" id="goal-badge"></span>
+      </div>
+      <div class="pbar"><div id="goal-b" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700; font-size:15px">전체 진도</div>
+      <div class="sub" id="dash-prog-t" style="margin-top:2px"></div>
+      <div class="pbar"><div id="dash-prog-b" style="width:0%"></div></div>
+    </div>
+    <div class="big-card" onclick="continueLearn()"><span class="emo">▶️</span><div><div class="t">이어서 학습하기</div><div class="sub" id="dash-next"></div></div></div>
+    <div class="big-card" onclick="startReview()"><span class="emo">🔁</span><div><div class="t">오늘의 복습</div><div class="sub" id="dash-rev"></div></div><span class="badge" id="dash-rev-n"></span></div>
+    <div class="big-card" onclick="openMap()"><span class="emo">🗂️</span><div><div class="t">코스 전체 보기</div><div class="sub">레벨 1~3 · 유닛 목록</div></div></div>
+    <div class="big-card" id="free-card" onclick="startFree()" style="display:none"><span class="emo">🎲</span><div><div class="t">자유 대화</div><div class="sub">아무 주제로 편하게 말하기</div></div></div>
+    <div class="big-card" id="kidfree-card" onclick="startKidFree()" style="display:none"><span class="emo">🗨️</span><div><div class="t">코코랑 자유수다</div><div class="sub">수다 떨면서 새 단어 수집하기</div></div></div>
+    <div class="big-card" id="vocab-card" onclick="openVocab()" style="display:none"><span class="emo">📔</span><div><div class="t">나의 단어장</div><div class="sub">수다에서 모은 단어들</div></div><span class="badge" id="vocab-n"></span></div>
+  </div>
+</section>
+
+<!-- 단어장 -->
+<section id="s-vocab" class="screen">
+  <div class="bar"><button class="back" onclick="show('s-dash')">←</button><span class="title">📔 나의 단어장</span><span class="sub" id="vocab-cnt"></span></div>
+  <div class="pad scroll" id="vocab-list"></div>
+</section>
+
+<!-- 코스 맵 -->
+<section id="s-map" class="screen">
+  <div class="bar"><button class="back" onclick="show('s-dash')">←</button><span class="title">코스</span></div>
+  <div class="pad scroll" id="map-list"></div>
+</section>
+
+<!-- 표현 배우기 (어른 step1) -->
+<section id="s-learn" class="screen">
+  <div class="bar"><button class="back" onclick="openMap()">←</button><span class="title" id="learn-title"></span></div>
+  <div class="steps"><span class="on"></span><span></span><span></span></div>
+  <div class="step-label">STEP 1 · 오늘의 표현 배우기</div>
+  <div class="pad scroll" id="learn-list"></div>
+  <div class="dock"><button class="pill go" style="width:100%" onclick="startDrill()">말하기 연습 시작 →</button></div>
+</section>
+
+<!-- 드릴 (공용 step2) -->
+<section id="s-drill" class="screen">
+  <div class="bar"><button class="back" onclick="exitDrill()">←</button><span class="title" id="drill-title"></span><span class="sub" id="drill-prog"></span></div>
+  <div class="steps" id="drill-steps"><span class="on"></span><span class="on"></span><span></span></div>
+  <div class="step-label" id="drill-label">STEP 2 · 따라 말하기</div>
+  <div class="stage">
+    <div class="flash-emo" id="d-emo" style="display:none"></div>
+    <div class="drill-en eng" id="d-en"></div>
+    <div class="drill-ko" id="d-ko"></div>
+    <div class="stars" id="d-stars"></div>
+    <div class="row">
+      <button class="pill" onclick="playDrill()">🔊 듣기</button>
+      <button class="pill ghost" onclick="skipDrill()">건너뛰기</button>
+    </div>
+  </div>
+  <div class="dock">
+    <div class="status" id="st-drill">🔊 듣고, 마이크를 눌러 따라 말하세요</div>
+    <button class="mic" id="mic-drill" onclick="micTap('drill')">🎤</button>
+  </div>
+</section>
+
+<!-- 채팅 (롤플레이/코코/자유/생성 공용) -->
+<section id="s-chat" class="screen">
+  <div class="bar"><button class="back" onclick="exitChat()">←</button><span class="title" id="chat-title"></span></div>
+  <div class="steps" id="chat-steps" style="display:none"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+  <div class="chip-row" id="targets"></div>
+  <div class="chat" id="chat"></div>
+  <div class="dock">
+    <div class="status" id="st-chat"></div>
+    <div class="row" style="margin-bottom:8px"><button class="pill go" id="finish-btn" style="display:none" onclick="finishUnit()">🎉 유닛 완료하기</button></div>
+    <button class="mic" id="mic-chat" onclick="micTap('chat')">🎤</button>
+  </div>
+</section>
+
+<!-- 복습 -->
+<section id="s-rev" class="screen">
+  <div class="bar"><button class="back" onclick="show('s-dash')">←</button><span class="title">🔁 복습</span><span class="sub" id="rev-prog"></span></div>
+  <div class="stage">
+    <div class="drill-ko" style="font-size:14px">한국어 뜻을 보고 영어로 말해 보세요</div>
+    <div class="drill-en" id="r-ko" style="font-size:24px"></div>
+    <div class="sub" id="r-hint" style="min-height:20px"></div>
+    <div class="stars" id="r-stars"></div>
+    <div class="row">
+      <button class="pill" onclick="revHint()">💡 힌트</button>
+      <button class="pill ghost" onclick="revShow()">정답 보기</button>
+    </div>
+  </div>
+  <div class="dock">
+    <div class="status" id="st-rev">마이크를 눌러 영어로 말해 보세요</div>
+    <button class="mic" id="mic-rev" onclick="micTap('rev')">🎤</button>
+  </div>
+</section>
+
+<script src="data_adult.js"></script>
+<script src="data_kid.js"></script>
+<script>
+/* ============ 상태/저장 ============ */
+const $=id=>document.getElementById(id);
+let S={key:'',model:'gemini-2.5-flash',stt:'auto'};
+let P={kid:{done:{},srs:{},vocab:{}},adult:{done:{},srs:{}},stats:{days:{},goal:20}};
+let CUSTOM={kid:[],adult:[]};
+let prof=null, unit=null, drill=null, chatCtx=null, rev=null, srBroken=false;
+const DAY=86400000;
+
+function loadAll(){
+  try{
+    const s=localStorage.getItem('fs_cfg'); if(s)Object.assign(S,JSON.parse(s));
+    const p=localStorage.getItem('fs_prog'); if(p){const o=JSON.parse(p); if(o.kid&&o.adult)P=o;}
+    if(!P.kid.vocab)P.kid.vocab={};
+    if(!P.stats)P.stats={days:{},goal:20};
+    const c=localStorage.getItem('fs_custom'); if(c){const o=JSON.parse(c); if(o.kid&&o.adult)CUSTOM=o;}
+  }catch(e){}
+}
+function saveCfg(){try{localStorage.setItem('fs_cfg',JSON.stringify(S));}catch(e){}}
+function saveProg(){try{localStorage.setItem('fs_prog',JSON.stringify(P));}catch(e){}}
+function saveCustom(){try{localStorage.setItem('fs_custom',JSON.stringify(CUSTOM));}catch(e){}}
+function wipeProgress(){
+  if(!confirm('학습 기록(진도·복습 큐·단어장·연속 기록)을 모두 지울까요?'))return;
+  P={kid:{done:{},srs:{},vocab:{}},adult:{done:{},srs:{}},stats:{days:{},goal:20}}; saveProg(); alert('초기화했습니다.');
+}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on');}
+function goHome(){document.body.classList.remove('kid'); renderHome(); show('s-home');}
+function saveSetup(){
+  S.key=$('in-key').value.trim(); S.model=$('in-model').value; S.stt=$('in-stt').value; saveCfg();
+  if(!S.key){alert('API 키를 입력해 주세요'); return;}
+  goHome();
+}
+async function testConnection(){
+  const key=$('in-key').value.trim(), model=$('in-model').value, el=$('setup-test');
+  if(!key){el.style.color='var(--warn)'; el.textContent='먼저 API 키를 입력해 주세요.'; return;}
+  el.style.color='var(--sub)'; el.innerHTML='<span class="spin">⏳</span> 확인 중…';
+  try{
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{
+      method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':key},
+      body:JSON.stringify({contents:[{role:'user',parts:[{text:'Reply with the single word: ok'}]}]})
+    });
+    if(r.ok){ el.style.color='var(--ok)'; el.textContent='✅ 정상! 키와 '+model+' 모델이 잘 작동합니다.'; return; }
+    const t=await r.text();
+    el.style.color='var(--warn)';
+    if(r.status===400&&/API_KEY_INVALID|API key not valid/i.test(t)) el.textContent='❌ API 키가 올바르지 않아요. 다시 확인해 주세요.';
+    else if(r.status===404) el.textContent='❌ "'+model+'" 모델을 찾을 수 없어요. 다른 모델을 골라 보세요.';
+    else if(r.status===429) el.textContent='⚠️ 요청 한도 초과(429). 잠시 후 다시 시도하세요.';
+    else el.textContent='❌ 오류 '+r.status+': '+t.slice(0,120);
+  }catch(e){ el.style.color='var(--warn)'; el.textContent='❌ 네트워크 오류: '+e.message; }
+}
+function exportProgress(){
+  try{
+    const data={app:'english-stage',ver:2,at:new Date().toISOString(),prog:P,custom:CUSTOM};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='english-stage-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  }catch(e){alert('백업 실패: '+e.message);}
+}
+function importProgress(input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  const fr=new FileReader();
+  fr.onload=()=>{
+    try{
+      const o=JSON.parse(fr.result);
+      if(!o.prog||!o.prog.kid||!o.prog.adult)throw new Error('백업 파일 형식이 올바르지 않습니다.');
+      if(!confirm('현재 학습 기록을 백업 파일 내용으로 덮어쓸까요?'))return;
+      P=o.prog; if(!P.kid.vocab)P.kid.vocab={};
+      if(!P.stats)P.stats={days:{},goal:20};
+      if(o.custom&&o.custom.kid&&o.custom.adult)CUSTOM=o.custom;
+      saveProg(); saveCustom(); renderHome();
+      alert('복원 완료! 학습 기록을 불러왔습니다.');
+    }catch(e){alert('복원 실패: '+e.message);}
+    finally{input.value='';}
+  };
+  fr.readAsText(f);
+}
+function curriculum(p){return (p==='kid'?KID_CURRICULUM:ADULT_CURRICULUM).concat(CUSTOM[p]);}
+
+/* ============ 연속일·일일 목표 ============ */
+function dayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function bump(){ // 말하기 1회 기록 (드릴 성공·대화 발화·복습 답변)
+  const k=dayKey(new Date());
+  P.stats.days[k]=(P.stats.days[k]||0)+1; saveProg();
+}
+function calcStreak(){
+  let n=0; const d=new Date();
+  if(!P.stats.days[dayKey(d)])d.setDate(d.getDate()-1); // 오늘 아직 안 했으면 어제부터 계산
+  while(P.stats.days[dayKey(d)]){n++; d.setDate(d.getDate()-1);}
+  return n;
+}
+function renderStats(){
+  const t=P.stats.days[dayKey(new Date())]||0, g=P.stats.goal||20, st=calcStreak();
+  $('streak-t').textContent=st>0?st+'일 연속 학습 중!':'오늘부터 연속 기록을 시작해 보세요';
+  $('goal-t').textContent='오늘 말하기 '+t+'회 · 탭해서 목표 변경';
+  $('goal-badge').textContent=t>=g?'🎉 목표 달성!':t+' / '+g;
+  $('goal-b').style.width=Math.min(100,Math.round(t/g*100))+'%';
+}
+function setGoal(){
+  const v=prompt('하루 말하기 목표 횟수를 입력하세요 (5~200)',P.stats.goal||20);
+  if(v===null)return;
+  const n=parseInt(v);
+  if(!n||n<5||n>200){alert('5~200 사이 숫자로 입력해 주세요.'); return;}
+  P.stats.goal=n; saveProg(); renderStats();
+}
+
+/* ============ 홈/대시보드 ============ */
+function renderHome(){
+  ['kid','adult'].forEach(p=>{
+    const c=curriculum(p), d=Object.keys(P[p].done).length;
+    $('bd-'+p).textContent=d+'/'+c.length;
+  });
+}
+function enter(p){
+  prof=p;
+  document.body.classList.toggle('kid',p==='kid');
+  $('dash-title').textContent=p==='kid'?'🧒 아이 모드':'🧑‍💼 어른 모드';
+  $('free-card').style.display=p==='adult'?'flex':'none';
+  $('kidfree-card').style.display=p==='kid'?'flex':'none';
+  $('vocab-card').style.display=p==='kid'?'flex':'none';
+  $('vocab-n').textContent=Object.keys(P.kid.vocab).length+'개';
+  const c=curriculum(p), done=Object.keys(P[p].done).length;
+  $('dash-prog-t').textContent=done+' / '+c.length+' 유닛 완료';
+  $('dash-prog-b').style.width=(c.length?Math.round(done/c.length*100):0)+'%';
+  const nx=c.find(u=>!P[p].done[u.id]);
+  $('dash-next').textContent=nx?('다음: '+nx.emo+' '+nx.title):'전체 완료! AI로 새 유닛을 만들어 보세요';
+  const due=dueItems();
+  $('dash-rev').textContent=due.length?'복습할 표현이 기다리고 있어요':'오늘 복습할 항목이 없어요';
+  $('dash-rev-n').textContent=due.length+'개';
+  renderStats();
+  show('s-dash');
+}
+function continueLearn(){
+  const nx=curriculum(prof).find(u=>!P[prof].done[u.id]);
+  if(!nx){openMap(); return;}
+  openUnit(nx);
+}
+
+/* ============ 코스 맵 ============ */
+function openMap(){
+  const el=$('map-list'); el.innerHTML='';
+  const c=curriculum(prof);
+  const lvName=prof==='kid'?['첫 단어들','한 문장 말하기','주고받는 대화']:['기초 생존 회화','일상 대화 확장','업무 영어'];
+  [1,2,3].forEach(lv=>{
+    const h=document.createElement('div'); h.className='lv-head'; h.textContent='LEVEL '+lv+' · '+lvName[lv-1]; el.appendChild(h);
+    c.filter(u=>u.lv===lv).forEach(u=>{
+      const done=P[prof].done[u.id];
+      const r=document.createElement('div'); r.className='unit-row'+(done?' done':'');
+      r.innerHTML='<span class="emo">'+u.emo+'</span><span class="t">'+u.title+'</span><span class="st">'+(done?'✓ '+'⭐'.repeat(done):'▶')+'</span>';
+      r.onclick=()=>openUnit(u);
+      el.appendChild(r);
+    });
+  });
+  const g=document.createElement('button'); g.className='btn-main'; g.textContent='✨ AI로 새 유닛 만들기';
+  g.onclick=genUnit; el.appendChild(g);
+  const n=document.createElement('p'); n.className='note'; n.textContent='새 유닛은 현재 레벨과 겹치지 않는 주제로 자동 생성되어 코스에 추가됩니다.';
+  el.appendChild(n);
+  show('s-map');
+}
+
+/* ============ 유닛 플레이어 ============ */
+function openUnit(u){
+  unit=u;
+  if(prof==='adult'){
+    $('learn-title').textContent=u.emo+' '+u.title;
+    const el=$('learn-list'); el.innerHTML='<p class="sub" style="margin-bottom:12px">'+u.intro+'</p>';
+    u.exprs.forEach(e=>{
+      const d=document.createElement('div'); d.className='expr';
+      d.innerHTML='<button class="play">🔊</button><div class="en eng">'+e.en+'</div><div class="ko">'+e.ko+'</div>'+
+        '<div class="ex">"'+e.ex+'"<div class="exko">'+e.exko+'</div></div>';
+      d.querySelector('.play').onclick=()=>speak(e.ex,0.95);
+      el.appendChild(d);
+    });
+    show('s-learn');
+  }else{
+    startDrill(); // 아이는 바로 단어 카드부터
+  }
+}
+function startDrill(){
+  const items = prof==='adult'
+    ? unit.drills.map(d=>({en:d.en,ko:d.ko,emo:null}))
+    : unit.words.map(w=>({en:w[1],ko:w[2],emo:w[0]})).concat(unit.phrases.map(p=>({en:p.en,ko:p.ko,emo:'💬'})));
+  drill={items:items,i:0,scores:[]};
+  $('drill-title').textContent=unit.emo+' '+unit.title;
+  $('drill-label').textContent=prof==='adult'?'STEP 2 · 따라 말하기 드릴':'STEP 1·2 · 단어와 문장 따라 말하기';
+  renderDrill(); show('s-drill'); setTimeout(playDrill,400);
+}
+function renderDrill(){
+  const it=drill.items[drill.i];
+  $('d-emo').style.display=it.emo?'block':'none'; $('d-emo').textContent=it.emo||'';
+  $('d-en').textContent=it.en; $('d-ko').textContent=it.ko;
+  $('d-stars').textContent=''; $('drill-prog').textContent=(drill.i+1)+' / '+drill.items.length;
+  $('st-drill').textContent='🔊 듣고, 마이크를 눌러 따라 말하세요';
+}
+function playDrill(){speak(drill.items[drill.i].en, prof==='kid'?0.75:0.95);}
+function skipDrill(){drill.scores.push(0); advanceDrill();}
+function advanceDrill(){
+  drill.i++;
+  if(drill.i>=drill.items.length){startApply(); return;}
+  renderDrill(); setTimeout(playDrill,300);
+}
+const norm=s=>s.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(Boolean);
+function match(target,said){
+  const a=norm(target), b=norm(said);
+  if(!a.length)return 0;
+  return a.filter(w=>b.includes(w)).length/a.length;
+}
+function onDrillSpeech(text){
+  const sc=match(drill.items[drill.i].en,text);
+  $('st-drill').textContent='내가 말한 것: "'+text+'"';
+  if(sc>=0.65){
+    drill.scores.push(sc); bump();
+    $('d-stars').textContent=sc>=0.9?'⭐⭐⭐ Perfect!':'⭐⭐ Great!';
+    if(prof==='kid')confetti();
+    speak('Great job!',1);
+    setTimeout(advanceDrill,1100);
+  }else if(sc>=0.35){
+    $('d-stars').textContent='⭐ Almost! 다시 한번';
+  }else{
+    $('d-stars').textContent='한 번 더 들어볼까요? 🔊'; playDrill();
+  }
+}
+function exitDrill(){ if(prof==='adult')show('s-learn'); else openMap(); }
+
+/* ============ STEP 3 : 롤플레이 / 코코 ============ */
+function startApply(){
+  if(prof==='adult'){
+    chatCtx={mode:'roleplay',hist:[],targets:unit.exprs.map(e=>({ko:e.en,keys:e.keys,hit:false})),turns:0,done:false};
+    $('chat-title').textContent=unit.emo+' 롤플레이: '+unit.title;
+  }else{
+    chatCtx={mode:'coco',hist:[],targets:[{ko:'미션: '+unit.mission.ko,keys:unit.mission.keys,hit:false}],turns:0,done:false};
+    $('chat-title').textContent='🐶 코코와 대화: '+unit.title;
+  }
+  $('chat-steps').style.display='flex';
+  $('chat').innerHTML=''; $('st-chat').textContent=''; $('finish-btn').style.display='none';
+  renderTargets(); show('s-chat');
+  if(prof==='kid'){ aiSay(unit.open,0.8); }
+  else turn(null,true);
+}
+function startFree(){
+  chatCtx={mode:'free',hist:[],targets:[],turns:0,done:true};
+  $('chat-title').textContent='🎲 자유 대화';
+  $('chat-steps').style.display='none';
+  $('chat').innerHTML=''; $('st-chat').textContent=''; $('finish-btn').style.display='none';
+  renderTargets(); show('s-chat'); turn(null,true);
+}
+function startKidFree(){
+  chatCtx={mode:'kidfree',hist:[],targets:[],turns:0,done:true};
+  $('chat-title').textContent='🗨️ 코코랑 자유수다';
+  $('chat-steps').style.display='none';
+  $('chat').innerHTML=''; $('st-chat').textContent=''; $('finish-btn').style.display='none';
+  renderTargets(); show('s-chat'); turn(null,true);
+}
+function seedWord(w){
+  if(!w||!w.en)return;
+  const en=w.en.trim(); const low=en.toLowerCase();
+  if(P.kid.vocab[low])return; // 이미 획득한 단어
+  if(chatCtx.targets.some(t=>t.word===low))return; // 이미 도전 중
+  chatCtx.targets=chatCtx.targets.filter(t=>!t.hit); // 획득 완료 칩 정리
+  chatCtx.targets.push({ko:'🆕 "'+en+'" 써보기',keys:[low],hit:false,word:low,wordKo:w.ko||''});
+  renderTargets();
+  const d=document.createElement('div'); d.className='wcard';
+  d.innerHTML='<div class="wt">🆕 오늘의 새 단어</div><div class="we eng">'+esc(en)+' <button class="replay">🔊</button></div><div class="wk">'+esc(w.ko||'')+' · 대화에서 직접 써보면 단어장에 저장돼요!</div>';
+  d.querySelector('.replay').onclick=()=>speak(en,0.8);
+  $('chat').appendChild(d); $('chat').scrollTop=$('chat').scrollHeight;
+}
+function collectWord(t){
+  P.kid.vocab[t.word]={ko:t.wordKo,at:Date.now()};
+  const sid='v_'+t.word;
+  if(!P.kid.srs[sid])P.kid.srs[sid]={box:1,due:Date.now()+DAY,en:t.word,ko:t.wordKo,keys:[t.word]};
+  saveProg(); confetti();
+  const b=document.createElement('div'); b.className='banner'; b.textContent='📔 단어 획득! '+t.word;
+  $('chat').appendChild(b); $('chat').scrollTop=$('chat').scrollHeight;
+}
+function openVocab(){
+  const el=$('vocab-list'); el.innerHTML='';
+  const entries=Object.entries(P.kid.vocab).sort((a,b)=>b[1].at-a[1].at);
+  $('vocab-cnt').textContent=entries.length+'개';
+  if(!entries.length){
+    el.innerHTML='<p class="sub" style="margin-top:20px; text-align:center">아직 모은 단어가 없어요.<br>🗨️ 코코랑 자유수다에서 새 단어를 듣고<br>직접 말해보면 여기에 저장됩니다!</p>';
+  }
+  entries.forEach(([en,v])=>{
+    const r=document.createElement('div'); r.className='vrow';
+    r.innerHTML='<span class="we eng">'+esc(en)+'</span><span class="wk">'+esc(v.ko)+'</span><button class="replay" style="font-size:18px">🔊</button>';
+    r.querySelector('.replay').onclick=()=>speak(en,0.8);
+    el.appendChild(r);
+  });
+  show('s-vocab');
+}
+function renderTargets(){
+  const el=$('targets'); el.innerHTML='';
+  chatCtx.targets.forEach(t=>{
+    const c=document.createElement('span'); c.className='chip'+(t.hit?' hit':''); c.textContent=(t.hit?'✓ ':'')+t.ko;
+    el.appendChild(c);
+  });
+}
+function bubble(cls,text,replayable){
+  const b=document.createElement('div'); b.className='bub '+cls; b.textContent=text;
+  if(replayable){
+    const r=document.createElement('button'); r.className='replay'; r.textContent='🔊';
+    r.onclick=()=>speak(text,prof==='kid'?0.8:1); b.appendChild(r);
+  }
+  $('chat').appendChild(b); $('chat').scrollTop=$('chat').scrollHeight;
+}
+function aiSay(text,rate){
+  chatCtx.hist.push({role:'model',parts:[{text:JSON.stringify({reply:text})}]});
+  bubble('ai',text,true); speak(text,rate||1);
+}
+function sysPrompt(){
+  if(chatCtx.mode==='kidfree'){
+    const known=Object.keys(P.kid.vocab).slice(-40).join(', ')||'none yet';
+    const pending=chatCtx.targets.filter(t=>!t.hit).map(t=>t.word).join(', ')||'none';
+    return "You are Coco, a playful puppy best-friend for a Korean elementary-school child who can already understand and speak basic English. Have a genuinely fun FREE conversation: follow the child's interests, and rotate topics naturally (school, friends, food, animals, games, weekend, dreams, seasons...). Use simple but natural English: 1-2 sentences, up to 10 words per sentence, and always end with an easy question.\n\nVOCABULARY SEEDING: Roughly every 2-3 of your turns, introduce EXACTLY ONE useful new English word the child might not know yet, matched to the current topic. Use it naturally in your reply and playfully encourage the child to try saying a sentence with it. When you introduce one, set newWord in your JSON. Do not introduce a new word while one is still pending. Words already collected (do NOT reintroduce): "+known+". Currently pending word: "+pending+".\n\nIf the child uses the pending word, celebrate! Respond ONLY with JSON: {\"reply\":\"your English reply\",\"newWord\":null or {\"en\":\"word\",\"ko\":\"짧은 한국어 뜻\"}}";
+  }
+  if(chatCtx.mode==='coco')
+    return "You are Coco, a cheerful friendly puppy talking with a young Korean child who is just starting English. Use VERY short simple sentences (max 6 words each, at most 2 sentences). Be warm, playful, encouraging. Gently guide the child toward this mission if they haven't done it: '"+unit.mission.ko+"'. Always end with one very easy question. Respond ONLY with JSON: {\"reply\":\"your English reply\"}";
+  if(chatCtx.mode==='free')
+    return "You are a curious, encouraging English conversation partner for a Korean adult at intermediate level. Use natural spoken English, 1-3 short sentences, ask follow-up questions. Also act as a gentle coach for the learner's LAST message. Respond ONLY with JSON: {\"reply\":\"...\",\"correction\":null or \"corrected natural version of their last sentence (only if clearly wrong)\",\"tip\":null or \"one short tip in Korean\"}";
+  const exprList=unit.exprs.map(e=>'"'+e.en+'"').join(', ');
+  return "You are role-playing as "+unit.role.who+". Scenario: "+unit.role.desc+" The learner is a Korean adult practicing these target expressions: "+exprList+". Stay in character, use natural spoken English (1-3 short sentences), and steer the conversation so the learner gets natural chances to use each target expression. Keep it going with questions. Also act as a gentle coach for the learner's LAST message. Respond ONLY with JSON: {\"reply\":\"your in-character English reply\",\"correction\":null or \"corrected natural version of the learner's last sentence (only if it had a clear error)\",\"tip\":null or \"one short tip in Korean about a more natural expression\"}";
+}
+function onChatSpeech(text){turn(text,false);}
+async function turn(userText,isFirst){
+  if(!isFirst){
+    bubble('me',userText);
+    chatCtx.hist.push({role:'user',parts:[{text:userText}]});
+    chatCtx.turns++; bump();
+    if(chatCtx.targets.length){
+      const low=' '+userText.toLowerCase()+' ';
+      chatCtx.targets.forEach(t=>{
+        if(!t.hit&&t.keys.some(k=>low.includes(k))){
+          t.hit=true;
+          if(chatCtx.mode==='kidfree'&&t.word)collectWord(t);
+        }
+      });
+      renderTargets();
+      if(chatCtx.mode!=='kidfree'&&chatCtx.targets.every(t=>t.hit)&&!chatCtx.done){
+        chatCtx.done=true; confetti();
+        const b=document.createElement('div'); b.className='banner'; b.textContent='🎯 미션 완료!';
+        $('chat').appendChild(b);
+        $('finish-btn').style.display='inline-block';
+      }
+    }
+    if(!chatCtx.done&&chatCtx.turns>=8)$('finish-btn').style.display='inline-block'; // 탈출구
+  }
+  $('st-chat').innerHTML='<span class="spin">⏳</span> 생각 중…';
+  try{
+    const contents=isFirst?[{role:'user',parts:[{text:'Start the conversation with your opening line.'}]}]:chatCtx.hist;
+    const raw=await gemini({
+      system_instruction:{parts:[{text:sysPrompt()}]},
+      contents:contents,
+      generationConfig:{responseMimeType:'application/json',temperature:0.9}
+    });
+    $('st-chat').textContent='';
+    const j=parseJSON(raw);
+    if(j.correction){
+      const f=document.createElement('div'); f.className='fix';
+      f.innerHTML='💡 <b>'+esc(j.correction)+'</b>'+(j.tip?('<br>'+esc(j.tip)):'');
+      $('chat').appendChild(f);
+    }else if(j.tip){
+      const f=document.createElement('div'); f.className='fix'; f.textContent='💡 '+j.tip;
+      $('chat').appendChild(f);
+    }
+    chatCtx.hist.push({role:'model',parts:[{text:raw}]});
+    bubble('ai',j.reply||'(…)',true);
+    if(chatCtx.mode==='kidfree'&&j.newWord)seedWord(j.newWord);
+    speak(j.reply||'',prof==='kid'?0.8:1);
+  }catch(e){$('st-chat').textContent='오류: '+e.message;}
+}
+function esc(s){return String(s).replace(/</g,'&lt;');}
+function exitChat(){
+  speechSynthesis.cancel();
+  if(chatCtx&&(chatCtx.mode==='free'||chatCtx.mode==='kidfree')){enter(prof); return;}
+  openMap();
+}
+function finishUnit(){
+  // 별점: 드릴 평균 점수
+  const avg=drill&&drill.scores.length?drill.scores.reduce((a,b)=>a+b,0)/drill.scores.length:0.7;
+  const stars=avg>=0.85?3:(avg>=0.6?2:1);
+  P[prof].done[unit.id]=stars;
+  // SRS 등록: 어른=표현 3개, 아이=문장 2개
+  const items = prof==='adult'
+    ? unit.exprs.map((e,i)=>({id:unit.id+'-e'+i,en:e.ex,ko:e.ko+' → '+e.exko,keys:e.keys}))
+    : unit.phrases.map((p,i)=>({id:unit.id+'-p'+i,en:p.en,ko:p.ko,keys:[]}));
+  items.forEach(it=>{
+    if(!P[prof].srs[it.id])P[prof].srs[it.id]={box:1,due:Date.now()+DAY,en:it.en,ko:it.ko,keys:it.keys};
+  });
+  saveProg(); confetti();
+  speechSynthesis.cancel();
+  enter(prof);
+}
+
+/* ============ SRS 복습 ============ */
+function dueItems(){
+  const now=Date.now();
+  return Object.entries(P[prof].srs).filter(([id,it])=>it.due<=now).map(([id,it])=>({id:id,...it}));
+}
+function startReview(){
+  const due=dueItems();
+  if(!due.length){alert('오늘 복습할 항목이 없어요! 유닛을 완료하면 다음 날부터 복습이 생깁니다.'); return;}
+  rev={items:due.sort(()=>Math.random()-.5),i:0,correct:0};
+  renderRev(); show('s-rev');
+}
+function renderRev(){
+  const it=rev.items[rev.i];
+  $('r-ko').textContent=it.ko;
+  $('r-hint').textContent=''; $('r-stars').textContent='';
+  $('rev-prog').textContent=(rev.i+1)+' / '+rev.items.length;
+  $('st-rev').textContent='마이크를 눌러 영어로 말해 보세요';
+}
+function revHint(){
+  const it=rev.items[rev.i];
+  const w=it.en.split(' ');
+  $('r-hint').textContent='힌트: '+w.slice(0,Math.max(1,Math.ceil(w.length/3))).join(' ')+' …';
+}
+function revShow(){revResult(false,true);}
+function onRevSpeech(text){
+  const it=rev.items[rev.i];
+  const low=' '+text.toLowerCase()+' ';
+  const keyHit=it.keys&&it.keys.length&&it.keys.some(k=>low.includes(k));
+  const ok=keyHit||match(it.en,text)>=0.6;
+  $('st-rev').textContent='내가 말한 것: "'+text+'"';
+  bump();
+  revResult(ok,false);
+}
+function revResult(ok,gaveUp){
+  const it=rev.items[rev.i], s=P[prof].srs[it.id];
+  if(ok){
+    s.box=Math.min(s.box+1,3); s.due=Date.now()+[1,3,7][s.box-1]*DAY;
+    $('r-stars').textContent='⭐ 정답! "'+it.en+'"'; speak(it.en,0.95); rev.correct++;
+  }else{
+    s.box=1; s.due=Date.now()+DAY;
+    $('r-stars').textContent=(gaveUp?'정답: ':'아쉬워요! 정답: ')+'"'+it.en+'"'; speak(it.en,0.9);
+  }
+  saveProg();
+  setTimeout(()=>{
+    rev.i++;
+    if(rev.i>=rev.items.length){
+      alert('복습 완료! '+rev.correct+' / '+rev.items.length+' 정답. 틀린 항목은 내일 다시 나와요.');
+      enter(prof);
+    }else renderRev();
+  },1600);
+}
+
+/* ============ AI 유닛 생성 ============ */
+async function genUnit(){
+  const lvIn=prompt('생성할 레벨을 입력하세요 (1, 2, 3)','2');
+  const lv=parseInt(lvIn); if(![1,2,3].includes(lv))return;
+  const c=curriculum(prof);
+  const existing=c.filter(u=>u.lv===lv).map(u=>u.title).join(', ');
+  const schema = prof==='adult'
+    ? '{"emo":"이모지1개","title":"유닛 제목(한국어)","intro":"소개 한 문장(한국어)","exprs":[{"en":"표현","ko":"한국어 뜻","ex":"예문","exko":"예문 번역","keys":["매칭용 소문자 핵심구"]} x3],"drills":[{"en":"문장","ko":"번역"} x6],"role":{"who":"AI가 연기할 역할(영어)","desc":"상황 설명(영어)"}}'
+    : '{"emo":"이모지1개","title":"유닛 제목(한국어)","words":[["이모지","영단어","한국어뜻"] x6],"phrases":[{"en":"짧은 문장","ko":"번역"} x2],"mission":{"ko":"미션 설명(한국어)","keys":["매칭용 소문자 키워드들"]},"open":"코코의 첫 마디(아주 쉬운 영어)"}';
+  const who = prof==='adult'?'a Korean adult intermediate learner':'a young Korean child beginner';
+  try{
+    alert('AI가 새 유닛을 만드는 중입니다. 잠시만요…');
+    const raw=await gemini({
+      system_instruction:{parts:[{text:'You are an English curriculum designer. Output ONLY valid JSON, no markdown.'}]},
+      contents:[{role:'user',parts:[{text:'Create ONE new English speaking lesson unit for '+who+', level '+lv+' of 3. Avoid these existing topics: '+existing+'. Follow EXACTLY this JSON schema: '+schema}]}],
+      generationConfig:{responseMimeType:'application/json',temperature:1.0}
+    });
+    const u=parseJSON(raw);
+    if(!u.title)throw new Error('생성 결과가 올바르지 않습니다');
+    u.id='c_'+prof+'_'+Date.now(); u.lv=lv;
+    CUSTOM[prof].push(u); saveCustom();
+    alert('새 유닛 추가: '+(u.emo||'✨')+' '+u.title);
+    openMap();
+  }catch(e){alert('생성 실패: '+e.message);}
+}
+
+/* ============ TTS ============ */
+let voices=[];
+function loadV(){voices=speechSynthesis.getVoices();}
+if('speechSynthesis' in window){speechSynthesis.onvoiceschanged=loadV; loadV();}
+function speak(t,rate){
+  if(!('speechSynthesis' in window)||!t)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang='en-US'; u.rate=rate||1;
+  const v=voices.find(v=>v.lang.startsWith('en')&&/Google US English|Samantha|Aria|Jenny/i.test(v.name))||voices.find(v=>v.lang.startsWith('en-US'))||voices.find(v=>v.lang.startsWith('en'));
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+
+/* ============ STT ============ */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let listening=false, stopFn=null;
+const MIC_CB={drill:onDrillSpeech,chat:onChatSpeech,rev:onRevSpeech};
+function micTap(where){
+  if(listening){ if(stopFn)stopFn(); return; }
+  const cb=MIC_CB[where], st=$('st-'+where), mic=$('mic-'+where);
+  const useBrowser = S.stt==='browser' || (S.stt==='auto' && SR && !srBroken);
+  if(useBrowser && SR) listenSR(cb,st,mic); else listenRec(cb,st,mic);
+}
+function setMic(mic,on){listening=on; mic.classList.toggle('listening',on); mic.textContent=on?'⏹':'🎤';}
+function listenSR(cb,st,mic){
+  const r=new SR(); r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1;
+  let got=false;
+  setMic(mic,true); st.textContent='듣고 있어요… 말한 뒤 잠시 기다리세요';
+  stopFn=()=>{try{r.stop()}catch(e){}};
+  r.onresult=e=>{got=true; setMic(mic,false); st.textContent=''; cb(e.results[0][0].transcript);};
+  r.onerror=e=>{
+    setMic(mic,false);
+    if(S.stt==='auto'){srBroken=true; st.textContent='브라우저 인식이 안 돼서 AI 인식으로 전환했어요. 다시 눌러주세요.';}
+    else st.textContent='인식 실패: '+e.error;
+  };
+  r.onend=()=>{ if(!got&&listening){setMic(mic,false); if(!st.textContent)st.textContent='잘 못 들었어요. 다시 눌러주세요.';} };
+  try{r.start();}catch(e){setMic(mic,false); srBroken=true; st.textContent='다시 눌러주세요 (AI 인식으로 전환).';}
+}
+async function listenRec(cb,st,mic){
+  let stream;
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:true});}
+  catch(e){st.textContent='마이크 권한을 허용해 주세요.'; return;}
+  const mime=MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':(MediaRecorder.isTypeSupported('audio/mp4')?'audio/mp4':'');
+  const rec=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);
+  const chunks=[];
+  rec.ondataavailable=e=>chunks.push(e.data);
+  rec.onstop=async()=>{
+    stream.getTracks().forEach(t=>t.stop());
+    setMic(mic,false); st.innerHTML='<span class="spin">⏳</span> 알아듣는 중…';
+    try{
+      const blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});
+      const b64=await new Promise((res,rej)=>{const fr=new FileReader(); fr.onload=()=>res(fr.result.split(',')[1]); fr.onerror=rej; fr.readAsDataURL(blob);});
+      const txt=await gemini({contents:[{role:'user',parts:[
+        {inline_data:{mime_type:blob.type,data:b64}},
+        {text:'Transcribe exactly what the speaker says in English. Output ONLY the transcription text, nothing else. If there is no speech, output an empty string.'}
+      ]}]});
+      st.textContent='';
+      const clean=(txt||'').trim();
+      if(clean)cb(clean); else st.textContent='잘 못 들었어요. 다시 말해주세요.';
+    }catch(e){st.textContent='오류: '+e.message;}
+  };
+  setMic(mic,true); st.textContent='🔴 녹음 중… 다 말하면 버튼을 다시 누르세요';
+  stopFn=()=>rec.stop();
+  rec.start();
+}
+
+/* ============ Gemini ============ */
+async function gemini(body){
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+S.model+':generateContent',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-goog-api-key':S.key},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok){const t=await r.text(); throw new Error(r.status+' '+t.slice(0,180));}
+  const d=await r.json();
+  return (d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');
+}
+function parseJSON(t){
+  try{return JSON.parse(t.replace(/```json|```/g,'').trim());}
+  catch(e){return {reply:(t||'').trim()};}
+}
+function confetti(){
+  const emo=['🎉','⭐','✨','🌟','🎈'];
+  for(let i=0;i<12;i++){
+    const s=document.createElement('span'); s.className='pop'; s.textContent=emo[i%emo.length];
+    s.style.left=(15+Math.random()*70)+'vw'; s.style.top=(30+Math.random()*20)+'vh';
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1100);
+  }
+}
+
+/* ============ 시작 ============ */
+loadAll();
+if(S.key){$('in-key').value=S.key; $('in-model').value=S.model; $('in-stt').value=S.stt; renderHome(); show('s-home');}
+else show('s-setup');
+// 오프라인 지원 (HTTPS/localhost에서만 등록됨)
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
