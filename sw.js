@@ -1,6 +1,6 @@
 // 우리집 영어 스테이지 — 오프라인 지원 서비스워커
 // 전략: 네트워크 우선 → 실패 시 캐시 (항상 최신 코드, 오프라인에서도 앱 셸 동작)
-const CACHE = 'english-stage-v1';
+const CACHE = 'english-stage-v2';
 const ASSETS = ['./', './index.html', './data_kid.js', './data_adult.js', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
